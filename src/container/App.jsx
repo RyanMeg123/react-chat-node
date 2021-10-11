@@ -21,6 +21,7 @@ const App = (props) => {
     const uid = generateUid();
     const username = user ? user : `游客${uid}`;
     dispatch({ type: 'login', payload: { uid, username } });
+    dispatch({type: 'UPDATE_CURRENT_USER',payload: {currentUserId: uid}})
     state.socket.emit('login', { uid, username });
   };
   const handleKeyPress = (e) => {
@@ -36,6 +37,7 @@ const App = (props) => {
         <ChatRoom uid={state.uid} username={state.username} socket={state.socket} />
       ) : (
         // 登录界面
+        <div className="login-container">
         <div className="login-box">
           <h2>登 陆</h2>
           <div className="input">
@@ -46,6 +48,7 @@ const App = (props) => {
               提交
             </button>
           </div>
+        </div>
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import PrivateMessages from './PrivateMessage';
 import Messages from './Messages';
 import ChatInput from './ChatInput';
 import SideChat from './SideChat';
@@ -57,6 +58,39 @@ const ChatRoom = (props) => {
       }
     });
   };
+
+  // 私聊新消息
+  const updatePrivateMsg = (obj) => {
+    const newMsg = {username: obj.username, sendFriendId: obj.sendFriendId,currentId: obj.currentId,action: obj.message, msgId: generateMsgId(), time: generateTime()};
+    dispatch({
+      type: 'UPDATE_PRIVATE_MESSAGE',
+      payload: {
+        privateMessages: newMsg,
+      }
+    });
+  };
+  // 存储信息
+  const updateStoreMsg = (obj) => {
+    const storeMsg = [];
+    console.log(obj,'这是存储的信息')
+    storeMsg.push(obj)
+    dispatch({
+      type: 'UPDATE_STORE_LIST',
+      payload: {
+        storeMessageList: storeMsg,
+      }
+    });
+  }
+    // 私聊当前
+  const updateCurrentMsg = (obj) => {
+    const newMsg = {username: obj.username, sendFriendId: obj.sendFriendId,currentId: obj.currentId,action: obj.message, msgId: generateMsgId(), time: generateTime() };
+    dispatch({
+      type: 'UPDATE_CURRENT_MESSAGE',
+      payload: {
+        currentMessage: newMsg,
+      }
+    });
+  };
   // 监听消息发送
   const ready = () => {
     const { socket } = props;
@@ -72,8 +106,18 @@ const ChatRoom = (props) => {
       updateSysMsg(o, 'logout');
     });
     socket.on('message', (obj) => {
+      console.log(obj,'这是群聊')
       updateMsg(obj);
     });
+    socket.on('private',(obj) => {
+      console.log(obj,'这是收到的消息')
+      // socket.to(obj.sendFriendId).emit('receiveMsg', obj)
+    })
+    socket.on('ceshi',(obj) => {
+      console.log(obj,'这是收到的私发的消息')
+      updatePrivateMsg(obj)
+      updateCurrentMsg(obj)
+    })
   };
   if (!init) {
     ready();
@@ -94,25 +138,70 @@ const ChatRoom = (props) => {
     console.log(userhtml,'userhtml')
     return userhtml;
   };
-  return (
-    <div className="chat-room">
-    <SideChat/>
-      <div className="welcome">
-        <div className="room-action">
-          <div className="room-name">鱼头的聊天室 | {props.username}</div>
+  const ChatRoomDom = () => {
+    return (
+      <div className="chat-body">
+        <div className="room-status">
+        ceshi:{state.showType}
+          在线人数: {state.onlineCount}, 在线列表: {renderUserList()}
+        </div>
+        <div>
+          <Messages messages={state.messages} myId={props.uid} />
+          <ChatInput myId={props.uid} myName={props.username} socket={props.socket} isPrivate={false}/>
+        </div>
+      </div>
+    )
+  }
+  const PrivateChat = () => {
+    return (
+      <div className="chat-body">
+         <PrivateMessages messages={state.messages} myId={state.showType} />
+         <ChatInput myId={props.uid} myName={props.username} socket={props.socket} isPrivate={true} currentId={props.uid} sendFriendId={state.showType}/>
+      </div>
+    )
+  }
+ 
+ let components;
+ if (state.showType === 1) {
+  components = <ChatRoomDom/>
+ } else if (state.showType === 0) {
+  components = <ChatRoomDom/>
+ } else {
+  components = <PrivateChat/>
+ }
+
+ const Top = () => {
+   if (state.showType == 1) {
+     return (
+      <div className="room-action">
+          <div className="room-name">鱼头的聊天室 | {props.username}{props.uid}</div>
           <div className="button">
             <button onClick={() => window.location.reload()}>登出</button>
           </div>
-        </div>
       </div>
-      <div className="room-status">
-        在线人数: {state.onlineCount}, 在线列表: {renderUserList()}
+     )
+   } else if(state.showType == 0) {
+    return (<div className="room-action">welcome</div>)
+
+   } else {
+     return (
+      <div className="room-action">
+            <div className="room-name">{props.username}的私聊窗口|{props.uid}</div>
+            <div className="button">
+              <button onClick={() => window.location.reload()}>登出</button>
+            </div>
       </div>
-      <div>
-        <Messages messages={state.messages} myId={props.uid} />
-        <ChatInput myId={props.uid} myName={props.username} socket={props.socket} />
+     )
+   }
+ }
+  return (
+    <div className="chat-room">
+      <SideChat/>
+      <div className="welcome">
+        <Top/>
+       </div>
+       {components}
       </div>
-    </div>
   );
 };
 export default ChatRoom;

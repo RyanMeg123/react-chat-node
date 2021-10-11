@@ -9,7 +9,10 @@ export default class ChatInput extends Component {
       socket: props.socket,
       message: '',
       myId: props.myId,
-      myName: props.myName
+      myName: props.myName,
+      isPrivate: props.isPrivate,
+      sendFriendId: props.sendFriendId,
+      currentId: props.currentId
     };
   }
 
@@ -36,15 +39,33 @@ export default class ChatInput extends Component {
 
   // 发送聊天信息
   sendMessage() {
+    console.log(this.state.isPrivate,'isPrivate')
+    console.log(this.state.message,'message')
     const message = this.state.message;
     const socket = this.state.socket;
+    console.log(socket,'socket')
+    console.log(this.state.currentId,'currentId currentId')
     if (message) {
+      const objPrivate = {
+        currentId: this.state.currentId,
+        sendFriendId: this.state.sendFriendId,
+        username: this.state.myName,
+        message: message,
+        type: 'user'
+      };
       const obj = {
         uid: this.state.myId,
         username: this.state.myName,
-        message: message
+        message: message,
+        type: 'group'
       };
-      socket.emit('message', obj);
+      if (this.state.isPrivate) {
+        console.log('是特茹吗')
+        // socket.to(objPrivate.sendFriendId).emit('ceshi',obj)
+        socket.emit('private', objPrivate);
+      } else {
+        socket.emit('message', obj);
+      }
       this.setState({
         message: ''
       });

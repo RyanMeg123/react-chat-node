@@ -21,6 +21,8 @@ const Message = (props) => {
 };
 
 const Messages = (props) => {
+  console.log(props.myId,'uiduid')
+
   const messageList = useRef(null);
   // 使用context中的状态，而不是props传值
   const { state } = useContext(Context);

@@ -17,7 +17,7 @@ $breakpoint-tablet: 768px;
 }
 
 body {
-  background: url('../img/whaletail.jpg') center center;
+  // background: url('../img/whaletail.jpg') center center;
   background-size: cover;
   background-attachment: fixed;
   font-size: 15px;
@@ -29,6 +29,12 @@ body {
     background-size: cover;
     background-attachment: fixed;
   }
+}
+
+.login-container {
+  width: 100%;
+  height: 100vh;
+  background: url('../img/bg2.jpg') center center;
 }
 
 .login-box {
@@ -94,24 +100,22 @@ body {
 
 .chat-room {
   color: #fff;
-  // max-width: 1200px;
-  // margin: 0 auto;
   display: flex;
   flex-direction: row;
-  height: 100vh;
+  height: calc(100vh - 104px);
   width: 100%;
+  margin-top: 100px;
 
   .welcome {
     @include clearfix;
     width: 100%;
-    color: rgba(0, 0, 0, 0.870588);
-    background: #fff;
-    padding: 10px 0;
+    color: #fff;
+    padding: 40px 0;
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
-    line-height: 24px;
+    background-color: #26292e;
 
     .room-action {
       max-width: 1200px;
@@ -123,12 +127,19 @@ body {
       margin-left: 10px;
     }
   }
+
+  .chat-body {
+    flex-direction: column;
+    width: 100%;
+    background: rgb(242, 242, 242);
+    padding: 30px;
+  }
 }
 
 .room-status {
-  margin-top: 50px;
   text-align: center;
   font-size: 13px;
+  color: #262626;
 }
 
 .messages {
@@ -137,7 +148,7 @@ body {
 
   .one-message.system-message {
     font-size: 13px;
-    color: #e0e0e0;
+    color: #8B9095;
     flex-direction: row;
     justify-content: center;
     align-items: baseline;
@@ -155,7 +166,7 @@ body {
     }
 
     .time {
-      color: #e0e0e0;
+      color: #8B9095;
     }
 
     .message-content {
@@ -245,14 +256,46 @@ button {
   width: 20%;
   display: flex;
   flex-direction: column;
-  padding: 10px 40px;
+  // padding: 10px 40px;
 
   .side-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: flex-start;
-    height: calc(100% - 65px);
-    width: 100%;
-    margin-top: 100px;
+    align-items: center;
+    cursor: pointer;
+    padding: 20px 30px;
+    border-bottom: 1px dashed #ccc;
+
+    .avatar-img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+    }
+
+    .list-name {
+      font-size: 18px;
+      color: #333333;
+      padding-left: 30px;
+    }
+  }
+
+  .active {
+    background: rgba(38, 41, 46, 0.5);
+
+    .list-name {
+      font-size: 18px;
+      color: #fff;
+      padding-left: 30px;
+    }
+  }
+
+  .private-action {
+
+
+    .room-name {
+      float: left;
+      margin-left: 10px;
+    }
   }
 }
